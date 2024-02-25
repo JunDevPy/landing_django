@@ -1,12 +1,12 @@
 services:
   landing-web-app:
-    container_name: web_container
+    container_name: web_container_landing
     build:
       context: .
     ports:
       - "8000:8000"
     volumes:
-      - ./service:/service
+      - ./landing:/landing
 
     environment:
       - DB_HOST=${DB_HOST}
@@ -21,13 +21,13 @@ services:
       sh -c "python manage.py runserver 0.0.0.0:8000"
 
     depends_on:
-      - postgres
+      - postgres_landing
 
     networks:
-      - postgres
+      - postgres_landing
 
-  postgres:
-    container_name: postgres_container
+  postgres_landing:
+    container_name: postgres_container_landing
     image: postgres:14.6-alpine
     command:
       - "postgres"
@@ -65,7 +65,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASS}
       PGDATA: "/var/lib/postgresql/data/pgdata"
     volumes:
-      - monitor-data:/var/lib/postgresql/data
+      - landing-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -81,10 +81,10 @@ services:
           cpus: '1'
           memory: 2G
     networks:
-      - postgres
+      - postgres_landing
 
-  pgadmin:
-    container_name: pgadmin_container
+  pgadmin_landing:
+    container_name: pgadmin_container_landing
     image: dpage/pgadmin4:7.2
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PG_DEFAULT_EMAIL}
@@ -95,7 +95,7 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      - postgres
+      - postgres_landing
     restart: unless-stopped
     deploy:
       resources:
@@ -103,12 +103,12 @@ services:
           cpus: '0.5'
           memory: 1G
     networks:
-      - postgres
+      - postgres_landing
 
 volumes:
-  monitor-data:
+  landing-data:
   pgadmin-data:
 
 networks:
-  postgres:
+  postgres_landing:
     driver: bridge

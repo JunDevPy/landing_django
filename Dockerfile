@@ -1,8 +1,8 @@
 FROM python:3.10.9-alpine3.16
 
 COPY requirements.txt /temp/requirements.txt
-#COPY landing_django /landing
-#WORKDIR /landing
+COPY landing /landing
+WORKDIR /landing
 EXPOSE 8000
 
 RUN apk add postgresql-client build-base postgresql-dev
